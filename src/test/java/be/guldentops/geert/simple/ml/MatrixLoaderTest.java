@@ -8,13 +8,13 @@ import java.util.List;
 import static be.guldentops.geert.simple.ml.MatrixTestUtilities.assertRowVector;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TrainingSetLoaderTest {
+class MatrixLoaderTest {
 
-	private final TrainingSetLoader trainingSetLoader = new TrainingSetLoader();
+	private final MatrixLoader matrixLoader = new MatrixLoader();
 
 	@Test
 	void loadsTrainingSetFoodTruckProfitsPerCity() {
-		var trainingSet = trainingSetLoader.load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
+		var trainingSet = matrixLoader.load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
 
 		assertThat(trainingSet).isNotNull();
 		assertThat(trainingSet.getNumRows()).isEqualTo(97);
@@ -28,7 +28,7 @@ class TrainingSetLoaderTest {
 
 	@Test
 	void loadsTrainingSetHousingPrices() {
-		var trainingSet = trainingSetLoader.load("training-sets/housing_prices.txt", new Dimensions(47, 3));
+		var trainingSet = matrixLoader.load("training-sets/housing_prices.txt", new Dimensions(47, 3));
 
 		assertThat(trainingSet).isNotNull();
 		assertThat(trainingSet.getNumRows()).isEqualTo(47);

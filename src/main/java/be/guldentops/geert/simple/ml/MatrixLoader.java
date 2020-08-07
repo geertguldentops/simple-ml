@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-public class TrainingSetLoader {
+public class MatrixLoader {
 
 	public Matrix load(String fileName, Dimensions dimensions) {
 		var absoluteFilePath = createAbsoluteFilePath(fileName);
