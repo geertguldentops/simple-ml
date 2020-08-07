@@ -17,8 +17,22 @@ A brief explanation of the training sets:
     | 6.1101            | 17.592        |
     | 5.5277            | 9.1302        |
     | 8.5186            | 13.662        |
+    | ...               | ...           |
  
     This makes it a perfect training set for univariate linear regression
+
+2.  housing_prices.txt is a training set about the housing prices in a city
+
+    It contains 2 features and a label:
+
+    | Size of the house (in square feet)    | Number of bedrooms    | price of the house in $   |
+    | -------------                         |:---------------------:|:-------------------------:|
+    | 2104                                  | 3                     | 399900                    |
+    | 1600                                  | 3                     | 329900                    |
+    | 2400                                  | 3                     | 369000                    |
+    | ...                                   | ...                   | ...                       |
+ 
+    This makes it a perfect training set for multivariate linear regression
 
 
 ## How do I get set up? ##

@@ -26,4 +26,17 @@ class TrainingSetLoaderTest {
 		assertRowVector(simpleMatrix.rows(96, 97), List.of(5.4369, 0.61705));
 	}
 
+	@Test
+	void loadsTrainingSetHousingPrices() {
+		var trainingSet = trainingSetLoader.load("training-sets/housing_prices.txt", new Dimensions(47, 3));
+
+		assertThat(trainingSet).isNotNull();
+		assertThat(trainingSet.getNumRows()).isEqualTo(47);
+		assertThat(trainingSet.getNumCols()).isEqualTo(3);
+
+		// Sanity check: only assert first and last row.
+		var simpleMatrix = SimpleMatrix.wrap(trainingSet);
+		assertRowVector(simpleMatrix.rows(0, 1), List.of(2104.0, 3.0, 399_900.0));
+		assertRowVector(simpleMatrix.rows(46, 47), List.of(1203.0, 3.0, 239_500.0));
+	}
 }
