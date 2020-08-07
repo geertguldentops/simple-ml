@@ -1,29 +1,18 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## What is this repository for? ##
 
-### What is this repository for? ###
+Some very simple machine learning algorithms written in vanilla Java and a single linear algebra library [EJML](http://ejml.org/wiki/index.php?title=Main_Page)
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+## How do I get set up? ##
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Compiling the code ###
 
-### Contribution guidelines ###
+Maven (3) is used to compile the code and run the tests: 
 
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* You can run maven manually using `mvn clean install` from the command line.
+* You can run the cleanInstall.sh script, e.g.: 
+    * `> chmod +x cleanInstall.sh`
+    * `> ./cleanInstall.sh` 
+* Run the project's only pom.xml file using your favourite IDE! (IntelliJ IDEA, Eclipse, Netbeans, etc.)
