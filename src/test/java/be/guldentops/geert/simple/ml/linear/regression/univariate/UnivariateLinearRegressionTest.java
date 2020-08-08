@@ -25,18 +25,31 @@ class UnivariateLinearRegressionTest {
 		}
 
 		@Test
-		public void addsBiasToFeature() {
+		void addsBiasToFeatures() {
 			algorithm.learn(trainingSet);
 
-			var X = algorithm.X();
+			var features = algorithm.features();
 
-			assertShape(X.getMatrix(), 97, 2);
+			assertShape(features.getMatrix(), 97, 2);
 
 			// Sanity check: only assert first and last row.
-			assertThat(X.get(0, 0)).isEqualTo(1.0);
-			assertThat(X.get(0, 1)).isEqualTo(6.1101);
-			assertThat(X.get(96, 0)).isEqualTo(1.0);
-			assertThat(X.get(96, 1)).isEqualTo(5.4369);
+			assertThat(features.get(0, 0)).isEqualTo(1.0);
+			assertThat(features.get(0, 1)).isEqualTo(6.1101);
+			assertThat(features.get(96, 0)).isEqualTo(1.0);
+			assertThat(features.get(96, 1)).isEqualTo(5.4369);
+		}
+
+		@Test
+		void extractLabels() {
+			algorithm.learn(trainingSet);
+
+			var labels = algorithm.labels();
+
+			assertShape(labels.getMatrix(), 97, 1);
+
+			// Sanity check: only assert first and last row.
+			assertThat(labels.get(0, 0)).isEqualTo(17.592);
+			assertThat(labels.get(96, 0)).isEqualTo(0.61705);
 		}
 	}
 
