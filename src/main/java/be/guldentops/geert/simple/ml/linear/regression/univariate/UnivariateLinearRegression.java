@@ -2,7 +2,6 @@ package be.guldentops.geert.simple.ml.linear.regression.univariate;
 
 import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.linear.regression.LinearRegression;
-import org.ejml.data.Matrix;
 import org.ejml.simple.SimpleMatrix;
 
 import static be.guldentops.geert.simple.ml.ArrayUtilities.ones;
@@ -48,18 +47,18 @@ public class UnivariateLinearRegression implements LinearRegression {
 	}
 
 	@Override
-	public void learn(Matrix trainingSet) {
+	public void learn(SimpleMatrix trainingSet) {
 		this.features = applyBias(extractFeatures(trainingSet));
 		this.labels = extractLabels(trainingSet);
 		this.model = gradientDescent(features, labels);
 	}
 
-	private SimpleMatrix extractFeatures(Matrix trainingSet) {
-		return SimpleMatrix.wrap(trainingSet).cols(0, 1);
+	private SimpleMatrix extractFeatures(SimpleMatrix trainingSet) {
+		return trainingSet.cols(0, 1);
 	}
 
 	private SimpleMatrix applyBias(SimpleMatrix features) {
-		var m = sizeOf(features);
+		var m = features.numRows();
 		var bias = ones(m);
 
 		var biasedFeatures = new SimpleMatrix(m, 2);
@@ -69,16 +68,12 @@ public class UnivariateLinearRegression implements LinearRegression {
 		return biasedFeatures;
 	}
 
-	private int sizeOf(SimpleMatrix features) {
-		return features.getMatrix().getNumRows();
-	}
-
-	private SimpleMatrix extractLabels(Matrix trainingSet) {
-		return SimpleMatrix.wrap(trainingSet).cols(1, 2);
+	private SimpleMatrix extractLabels(SimpleMatrix trainingSet) {
+		return trainingSet.cols(1, 2);
 	}
 
 	private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
-		var m = sizeOf(features);
+		var m = features.numRows();
 		var theta = initialiseTheta();
 
 		for (int i = 0; i < hyperparameters.maxIterations(); i++) {
@@ -96,7 +91,10 @@ public class UnivariateLinearRegression implements LinearRegression {
 	}
 
 	@Override
-	public double predict(Matrix newData) {
-		throw new UnsupportedOperationException("Not implemented!");
+	public double predict(SimpleMatrix newData) {
+		var biasedNewData = applyBias(newData);
+		var prediction = biasedNewData.mult(model);
+
+		return prediction.get(0);
 	}
 }

@@ -1,11 +1,11 @@
 package be.guldentops.geert.simple.ml.linear.regression;
 
-import org.ejml.data.Matrix;
+import org.ejml.simple.SimpleMatrix;
 
 public interface LinearRegression {
 
-	void learn(Matrix trainingSet);
+	void learn(SimpleMatrix trainingSet);
 
-	double predict(Matrix newData);
+	double predict(SimpleMatrix newData);
 
 }

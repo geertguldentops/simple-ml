@@ -1,7 +1,7 @@
 package be.guldentops.geert.simple.ml;
 
-import org.ejml.data.Matrix;
 import org.ejml.ops.MatrixIO;
+import org.ejml.simple.SimpleMatrix;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -9,13 +9,13 @@ import java.nio.file.Paths;
 
 public class MatrixLoader {
 
-	public Matrix load(String fileName, Dimensions dimensions) {
+	public SimpleMatrix load(String fileName, Dimensions dimensions) {
 		var absoluteFilePath = createAbsoluteFilePath(fileName);
 		var rows = dimensions.rows();
 		var columns = dimensions.columns();
 
 		try {
-			return MatrixIO.loadCSV(absoluteFilePath, rows, columns);
+			return SimpleMatrix.wrap(MatrixIO.loadCSV(absoluteFilePath, rows, columns));
 		} catch (IOException e) {
 			throw new RuntimeException(String.format("Could not read file %s into a matrix %dx%d", fileName, rows, columns), e);
 		}
