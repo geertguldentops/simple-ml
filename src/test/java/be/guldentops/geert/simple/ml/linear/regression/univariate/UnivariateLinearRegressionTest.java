@@ -1,6 +1,7 @@
 package be.guldentops.geert.simple.ml.linear.regression.univariate;
 
 import be.guldentops.geert.simple.ml.Dimensions;
+import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.MatrixLoader;
 import org.ejml.data.Matrix;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,17 +13,17 @@ import static org.ejml.EjmlUnitTests.assertShape;
 
 class UnivariateLinearRegressionTest {
 
+	private UnivariateLinearRegression algorithm;
+	private Matrix trainingSet;
+
+	@BeforeEach
+	void setUp() {
+		this.algorithm = new UnivariateLinearRegression(new Hyperparameters(0.01, 1500));
+		this.trainingSet = new MatrixLoader().load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
+	}
+
 	@Nested
-	class StepStoneTests {
-
-		private UnivariateLinearRegression algorithm;
-		private Matrix trainingSet;
-
-		@BeforeEach
-		void setUp() {
-			this.algorithm = new UnivariateLinearRegression();
-			this.trainingSet = new MatrixLoader().load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
-		}
+	class WhiteBoxTests {
 
 		@Test
 		void addsBiasToFeatures() {
@@ -50,6 +51,19 @@ class UnivariateLinearRegressionTest {
 			// Sanity check: only assert first and last row.
 			assertThat(labels.get(0, 0)).isEqualTo(17.592);
 			assertThat(labels.get(96, 0)).isEqualTo(0.61705);
+		}
+
+		@Test
+		void learnsModelThatFitsTrainingSet() {
+			algorithm.learn(trainingSet);
+
+			var model = algorithm.model();
+
+			assertShape(model.getMatrix(), 2, 1);
+
+			// Note: There is actually no way to know these values up front, otherwise it would not be machine learning!
+			assertThat(model.get(0, 0)).isEqualTo(-3.63029143940436);
+			assertThat(model.get(1, 0)).isEqualTo(1.166362350335582);
 		}
 	}
 
