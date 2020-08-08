@@ -9,23 +9,23 @@ import java.nio.file.Paths;
 
 public class MatrixLoader {
 
-	public SimpleMatrix load(String fileName, Dimensions dimensions) {
-		var absoluteFilePath = createAbsoluteFilePath(fileName);
-		var rows = dimensions.rows();
-		var columns = dimensions.columns();
+    public SimpleMatrix load(String fileName, Dimensions dimensions) {
+        var absoluteFilePath = createAbsoluteFilePath(fileName);
+        var rows = dimensions.rows();
+        var columns = dimensions.columns();
 
-		try {
-			return SimpleMatrix.wrap(MatrixIO.loadCSV(absoluteFilePath, rows, columns));
-		} catch (IOException e) {
-			throw new RuntimeException(String.format("Could not read file %s into a matrix %dx%d", fileName, rows, columns), e);
-		}
-	}
+        try {
+            return SimpleMatrix.wrap(MatrixIO.loadCSV(absoluteFilePath, rows, columns));
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Could not read file %s into a matrix %dx%d", fileName, rows, columns), e);
+        }
+    }
 
-	private String createAbsoluteFilePath(String fileName) {
-		try {
-			return Paths.get(ClassLoader.getSystemResource(fileName).toURI()).toAbsolutePath().toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(String.format("Could resolve absolute file path of %s", fileName), e);
-		}
-	}
+    private String createAbsoluteFilePath(String fileName) {
+        try {
+            return Paths.get(ClassLoader.getSystemResource(fileName).toURI()).toAbsolutePath().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(String.format("Could resolve absolute file path of %s", fileName), e);
+        }
+    }
 }

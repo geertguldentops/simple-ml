@@ -4,8 +4,8 @@ import org.ejml.simple.SimpleMatrix;
 
 public interface LinearRegression {
 
-	void learn(SimpleMatrix trainingSet);
+    void learn(SimpleMatrix trainingSet);
 
-	double predict(SimpleMatrix newData);
+    double predict(SimpleMatrix newData);
 
 }
