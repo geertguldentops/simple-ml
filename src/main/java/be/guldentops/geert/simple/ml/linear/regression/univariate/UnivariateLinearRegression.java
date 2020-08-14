@@ -74,7 +74,7 @@ public class UnivariateLinearRegression implements LinearRegression {
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
         var m = features.numRows();
-        var theta = initialiseTheta();
+        var theta = initialiseTheta(features.numCols());
 
         for (int i = 0; i < hyperparameters.maxIterations(); i++) {
             var h = features.mult(theta);
@@ -86,8 +86,8 @@ public class UnivariateLinearRegression implements LinearRegression {
         return theta;
     }
 
-    private SimpleMatrix initialiseTheta() {
-        return zeros(2);
+    private SimpleMatrix initialiseTheta(int n) {
+        return zeros(n);
     }
 
     @Override

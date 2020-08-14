@@ -20,8 +20,8 @@ class UnivariateLinearRegressionTest {
     void setUp() {
         var trainingSet = new MatrixLoader().load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
 
-        this.algorithm = new UnivariateLinearRegression(new Hyperparameters(0.01, 1500));
-        this.algorithm.learn(trainingSet);
+        algorithm = new UnivariateLinearRegression(new Hyperparameters(0.01, 1500));
+        algorithm.learn(trainingSet);
     }
 
     @Nested
