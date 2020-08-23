@@ -34,6 +34,18 @@ A brief explanation of the training sets:
  
     This makes it a perfect training set for multivariate linear regression
 
+3.  student_admission.txt is a training set about student study results and whether they were admitted to university or not
+
+    It contains 2 features and a label:
+
+    | Penultimate exam result       | Final exam result     | Admitted to university    |
+    | -------------                 |:---------------------:|:-------------------------:|
+    | 34.62365962451697             | 78.0246928153624      | 0 (was not admitted)      |
+    | 30.28671076822607             | 43.89499752400101     | 0 (was not admitted)      |
+    | 60.18259938620976             | 86.30855209546826     | 1 (was admitted)          |
+    | ...                           | ...                   | ...                       |
+ 
+    This makes it a perfect training set for (multivariate) logistic regression (without requiring regularisation)
 
 ## How do I get set up? ##
 
