@@ -1,6 +1,7 @@
 package be.guldentops.geert.simple.ml.logistic.regression;
 
 import be.guldentops.geert.simple.ml.Hyperparameters;
+import be.guldentops.geert.simple.ml.normalization.Normalizer;
 import org.ejml.simple.SimpleMatrix;
 
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.ones;
@@ -9,13 +10,19 @@ import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.zeros;
 public class MultivariateLogisticRegression implements LogisticRegression {
 
     private final Hyperparameters hyperparameters;
+    private final Normalizer normalizer;
 
     private SimpleMatrix features;
     private SimpleMatrix labels;
+
+    private SimpleMatrix mean;
+    private SimpleMatrix standardDeviation;
+
     private SimpleMatrix model;
 
     public MultivariateLogisticRegression(Hyperparameters hyperparameters) {
         this.hyperparameters = hyperparameters;
+        this.normalizer = new Normalizer();
     }
 
     /* default */SimpleMatrix features() {
@@ -34,7 +41,11 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     public void learn(SimpleMatrix trainingSet) {
         this.features = extractFeatures(trainingSet);
         this.labels = extractLabels(trainingSet);
-        this.model = gradientDescent(applyBias(features), labels);
+
+        this.mean = normalizer.calculateMean(features);
+        this.standardDeviation = normalizer.calculateStandardDeviation(features, mean);
+
+        this.model = gradientDescent(applyBias(normalizer.normalize(features, mean, standardDeviation)), labels);
     }
 
     private SimpleMatrix extractFeatures(SimpleMatrix trainingSet) {
@@ -58,7 +69,7 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
     /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta) {
         var m = features.numRows();
-        var biasedFeatures = applyBias(features);
+        var biasedFeatures = applyBias(normalizer.normalize(features, mean, standardDeviation));
 
         var hypothesis = sigmoid(biasedFeatures.mult(theta));
         var derivedCostFunction = (biasedFeatures.transpose()).mult(hypothesis.minus(labels));
@@ -71,10 +82,9 @@ public class MultivariateLogisticRegression implements LogisticRegression {
         var theta = initialiseTheta(features.numCols());
 
         for (int i = 0; i < hyperparameters.maxIterations(); i++) {
-            var h = sigmoid(features.mult(theta));
-            var derivedCostFunction = (features.transpose()).mult(h.minus(labels));
+            var g = sigmoid(features.mult(theta));
+            var derivedCostFunction = (features.transpose()).mult(g.minus(labels));
 
-            // TODO: Cost function doesn't seem to work with learning rate/gradient descent
             theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate() / m));
         }
 
@@ -105,7 +115,7 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix predict(SimpleMatrix newData) {
-        var biasedNewData = applyBias(newData);
+        var biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
 
         return sigmoid(biasedNewData.mult(model));
     }

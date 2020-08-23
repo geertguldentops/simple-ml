@@ -21,7 +21,7 @@ class LogisticRegressionTest {
     void setUp() {
         var trainingSet = new MatrixLoader().load("training-sets/student_admission.txt", new Dimensions(100, 3));
 
-        algorithm = new MultivariateLogisticRegression(new Hyperparameters(0.01, 400));
+        algorithm = new MultivariateLogisticRegression(new Hyperparameters(0.01, 10_000));
         algorithm.learn(trainingSet);
     }
 
@@ -60,8 +60,8 @@ class LogisticRegressionTest {
             assertShape(gradient.getMatrix(), 3, 1);
 
             assertThat(gradient.get(0, 0)).isEqualTo(-0.1000, offset(0.0001));
-            assertThat(gradient.get(1, 0)).isEqualTo(-12.0092, offset(0.0001));
-            assertThat(gradient.get(2, 0)).isEqualTo(-11.2628, offset(0.0001));
+            assertThat(gradient.get(1, 0)).isEqualTo(-0.279819456602434, offset(0.00000000001));
+            assertThat(gradient.get(2, 0)).isEqualTo(-0.249728062093054, offset(0.00000000001));
         }
 
         @Test
@@ -70,9 +70,9 @@ class LogisticRegressionTest {
             var gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta);
 
             assertShape(gradient.getMatrix(), 3, 1);
-            assertThat(gradient.get(0, 0)).isEqualTo(0.043, offset(0.001));
-            assertThat(gradient.get(1, 0)).isEqualTo(2.566, offset(0.001));
-            assertThat(gradient.get(2, 0)).isEqualTo(2.647, offset(0.001));
+            assertThat(gradient.get(0, 0)).isEqualTo(-0.5999999999607762, offset(0.00000000001));
+            assertThat(gradient.get(1, 0)).isEqualTo(-0.27981945659506, offset(0.000000001));
+            assertThat(gradient.get(2, 0)).isEqualTo(-0.2497280620855351, offset(0.00000000001));
         }
 
         @Test
@@ -80,9 +80,9 @@ class LogisticRegressionTest {
             var model = algorithm.model();
 
             assertShape(model.getMatrix(), 3, 1);
-            assertThat(model.get(0, 0)).isEqualTo(-25.161, offset(0.001));
-            assertThat(model.get(1, 0)).isEqualTo(0.206, offset(0.001));
-            assertThat(model.get(2, 0)).isEqualTo(0.201, offset(0.001));
+            assertThat(model.get(0, 0)).isEqualTo(1.2677701988489238, offset(0.00000000001));
+            assertThat(model.get(1, 0)).isEqualTo(3.0555058686572587, offset(0.00000000001));
+            assertThat(model.get(2, 0)).isEqualTo(2.8189190133012114, offset(0.00000000001));
         }
     }
 
@@ -95,7 +95,7 @@ class LogisticRegressionTest {
 
             var predictAdmission = algorithm.predictOne(newData);
 
-            assertThat(predictAdmission).isEqualTo(1);
+            assertThat(predictAdmission).isEqualTo(1.0);
         }
 
         @Test
