@@ -1,6 +1,5 @@
 package be.guldentops.geert.simple.ml.linear.regression.univariate;
 
-import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.linear.regression.LinearRegression;
 import org.ejml.simple.SimpleMatrix;
 
@@ -96,5 +95,8 @@ public class UnivariateLinearRegression implements LinearRegression {
         var prediction = biasedNewData.mult(model);
 
         return prediction.get(0);
+    }
+
+    public record Hyperparameters(double learningRate, int maxIterations) {
     }
 }

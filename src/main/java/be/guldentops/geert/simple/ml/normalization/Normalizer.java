@@ -45,10 +45,15 @@ public class Normalizer {
             var columnStandardDeviation = standardDeviation.get(0, j);
 
             for (int i = 0; i < matrix.numRows(); i++) {
-                normalizedMatrix.set(i, j, ((matrix.get(i, j) - columnMean) / columnStandardDeviation));
+                normalizedMatrix.set(i, j, ((matrix.get(i, j) - columnMean) / handleZero(columnStandardDeviation)));
             }
         }
 
         return normalizedMatrix;
+    }
+
+    private double handleZero(double columnStandardDeviation) {
+        // Division by zero results in NaN -> divide by 1 instead since 1 will have no effect
+        return columnStandardDeviation != 0 ? columnStandardDeviation : 1;
     }
 }

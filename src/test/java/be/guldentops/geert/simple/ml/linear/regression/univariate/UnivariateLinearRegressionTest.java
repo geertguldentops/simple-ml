@@ -1,8 +1,8 @@
 package be.guldentops.geert.simple.ml.linear.regression.univariate;
 
 import be.guldentops.geert.simple.ml.Dimensions;
-import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.MatrixLoader;
+import be.guldentops.geert.simple.ml.linear.regression.univariate.UnivariateLinearRegression.Hyperparameters;
 import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

@@ -1,8 +1,8 @@
-package be.guldentops.geert.simple.ml.logistic.regression;
+package be.guldentops.geert.simple.ml.logistic.regression.multivariate;
 
 import be.guldentops.geert.simple.ml.Dimensions;
-import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.MatrixLoader;
+import be.guldentops.geert.simple.ml.logistic.regression.multivariate.MultivariateLogisticRegression.Hyperparameters;
 import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 import static org.ejml.EjmlUnitTests.assertShape;
 
-class LogisticRegressionTest {
+class MultivariateLogisticRegressionTest {
 
     private MultivariateLogisticRegression algorithm;
 

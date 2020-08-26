@@ -48,7 +48,7 @@ A brief explanation of the training sets:
     This makes it a perfect training set for (multivariate) logistic regression (without requiring regularisation)
     
 4.  handwritten_digits.txt is a training set containing handwritten digits, it is a subset of data of the 
-    MNIST handwritten digit dataset (http://yann.lecun.com/ exdb/mnist/) as a training set
+    MNIST handwritten digit dataset (http://yann.lecun.com/exdb/mnist/) as a training set
     
     Each training example is a 20 pixel by 20 pixel grayscale image of the digit. 
     Each pixel is represented by a floating point number indicating the grayscale intensity at that location. 

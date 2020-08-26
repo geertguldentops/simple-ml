@@ -1,6 +1,5 @@
 package be.guldentops.geert.simple.ml.linear.regression.multivariate;
 
-import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.linear.regression.LinearRegression;
 import be.guldentops.geert.simple.ml.normalization.Normalizer;
 import org.ejml.simple.SimpleMatrix;
@@ -78,4 +77,6 @@ public class MultivariateLinearRegression implements LinearRegression {
         return prediction.get(0);
     }
 
+    public record Hyperparameters(double learningRate, int maxIterations) {
+    }
 }

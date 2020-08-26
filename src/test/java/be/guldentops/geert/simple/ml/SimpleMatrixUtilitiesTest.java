@@ -107,4 +107,45 @@ class SimpleMatrixUtilitiesTest {
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("a & b must have an equal number of columns!");
     }
+
+    @Test
+    void equalityMatrixWithEqual() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{2}, {2}, {2}}),
+                2
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{1}, {1}, {1}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithCompletelyDifferent() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{1}, {3}, {4}}),
+                2
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{0}, {0}, {0}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithPartiallyDifferent() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{1}, {3}, {4}, {3}}),
+                3
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{0}, {1}, {0}, {1}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithNotColumnVector() {
+        assertThatThrownBy(() ->
+                eq(
+                        new SimpleMatrix(new double[][]{{1, 2}, {3, 8}}),
+                        2
+                )
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("a must be a column vector!");
+    }
 }

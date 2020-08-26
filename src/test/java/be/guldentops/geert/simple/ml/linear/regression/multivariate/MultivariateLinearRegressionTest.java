@@ -1,9 +1,8 @@
 package be.guldentops.geert.simple.ml.linear.regression.multivariate;
 
 import be.guldentops.geert.simple.ml.Dimensions;
-import be.guldentops.geert.simple.ml.Hyperparameters;
 import be.guldentops.geert.simple.ml.MatrixLoader;
-import be.guldentops.geert.simple.ml.linear.regression.LinearRegression;
+import be.guldentops.geert.simple.ml.linear.regression.multivariate.MultivariateLinearRegression.Hyperparameters;
 import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +13,7 @@ import static org.assertj.core.data.Offset.offset;
 
 public class MultivariateLinearRegressionTest {
 
-    private LinearRegression algorithm;
+    private MultivariateLinearRegression algorithm;
 
     @BeforeEach
     void setUp() {

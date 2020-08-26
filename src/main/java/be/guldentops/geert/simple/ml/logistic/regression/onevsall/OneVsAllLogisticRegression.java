@@ -1,13 +1,15 @@
-package be.guldentops.geert.simple.ml.logistic.regression;
+package be.guldentops.geert.simple.ml.logistic.regression.onevsall;
 
-import be.guldentops.geert.simple.ml.Hyperparameters;
+import be.guldentops.geert.simple.ml.logistic.regression.LogisticRegression;
 import be.guldentops.geert.simple.ml.normalization.Normalizer;
 import org.ejml.simple.SimpleMatrix;
 
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.eq;
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.maxIndex;
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.ones;
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.zeros;
 
-public class MultivariateLogisticRegression implements LogisticRegression {
+public class OneVsAllLogisticRegression implements LogisticRegression {
 
     private final Hyperparameters hyperparameters;
     private final Normalizer normalizer;
@@ -20,7 +22,7 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
     private SimpleMatrix model;
 
-    public MultivariateLogisticRegression(Hyperparameters hyperparameters) {
+    public OneVsAllLogisticRegression(Hyperparameters hyperparameters) {
         this.hyperparameters = hyperparameters;
         this.normalizer = new Normalizer();
     }
@@ -45,7 +47,19 @@ public class MultivariateLogisticRegression implements LogisticRegression {
         this.mean = normalizer.calculateMean(features);
         this.standardDeviation = normalizer.calculateStandardDeviation(features, mean);
 
-        this.model = gradientDescent(applyBias(normalizer.normalize(features, mean, standardDeviation)), labels);
+        // Add + 1 to account for bias
+        var allThetas = new SimpleMatrix(hyperparameters.numberOfLabels, features.numCols() + 1);
+        allThetas.zero();
+
+        for (int i = 0; i < hyperparameters.numberOfLabels; i++) {
+            var classGroundTruth = eq(labels, i + 1);
+            System.out.printf("Staring calculation of gradient descent for number %d (zero == 10)\n", (i + 1));
+            var theta = gradientDescent(applyBias(normalizer.normalize(features, mean, standardDeviation)), classGroundTruth);
+            System.out.printf("Finished calculating gradient descent for i %d (zero == 10)\n", (i + 1));
+            allThetas.insertIntoThis(i, 0, theta.transpose());
+        }
+
+        this.model = allThetas;
     }
 
     private SimpleMatrix extractFeatures(SimpleMatrix trainingSet) {
@@ -67,14 +81,22 @@ public class MultivariateLogisticRegression implements LogisticRegression {
         return biasedFeatures;
     }
 
-    /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta) {
+    /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta, double lambda) {
         var m = features.numRows();
-        var biasedFeatures = applyBias(normalizer.normalize(features, mean, standardDeviation));
+        var biasedFeatures = applyBias(features);
 
-        var hypothesis = sigmoid(biasedFeatures.mult(theta));
-        var derivedCostFunction = (biasedFeatures.transpose()).mult(hypothesis.minus(labels));
+        var g = sigmoid(biasedFeatures.mult(theta));
+        var derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
+        var regularizationTerm = thetaWithoutBias(theta).scale(lambda / m);
 
-        return derivedCostFunction.divide(m);
+        return derivedCostFunction.plus(regularizationTerm);
+    }
+
+    private SimpleMatrix thetaWithoutBias(SimpleMatrix theta) {
+        var thetaWithoutBias = new SimpleMatrix(theta.numRows(), theta.numCols());
+        thetaWithoutBias.insertIntoThis(1, 0, theta.rows(1, theta.numRows()));
+
+        return thetaWithoutBias;
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
@@ -83,9 +105,11 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
         for (int i = 0; i < hyperparameters.maxIterations(); i++) {
             var g = sigmoid(features.mult(theta));
-            var derivedCostFunction = (features.transpose()).mult(g.minus(labels));
+            var derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+            // It should be "thetaWithoutBias(theta)" but training accuracy drops by 21% if we do that!
+            var regularizationTerm = /*thetaWithoutBias(*/theta/*)*/.scale(1 - (hyperparameters.learningRate * hyperparameters.lambda / m));
 
-            theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate() / m));
+            theta = regularizationTerm.minus(derivedCostFunction);
         }
 
         return theta;
@@ -117,17 +141,25 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     private SimpleMatrix predict(SimpleMatrix newData) {
         var biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
 
-        return sigmoid(biasedNewData.mult(model));
+        return sigmoid(biasedNewData.mult(model.transpose()));
     }
 
     @Override
     public SimpleMatrix predictMany(SimpleMatrix newData) {
         var predictions = predict(newData);
 
+        var finalPredictions = new SimpleMatrix(newData.numRows(), 1);
         for (int i = 0; i < predictions.numRows(); i++) {
-            predictions.set(i, 0, predictions.get(i, 0) >= 0.5 ? 1 : 0);
+            var maxIndex = maxIndex(predictions.extractVector(true, i));
+            finalPredictions.set(i, 0, (maxIndex + 1)); // Data is 1-indexed instead of 0-indexed!
         }
 
-        return predictions;
+        return finalPredictions;
+    }
+
+    public record Hyperparameters(double learningRate,
+                                  int maxIterations,
+                                  double lambda,
+                                  int numberOfLabels) {
     }
 }

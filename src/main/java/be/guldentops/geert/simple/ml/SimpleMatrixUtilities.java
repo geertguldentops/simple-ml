@@ -46,4 +46,40 @@ public final class SimpleMatrixUtilities {
 
         return eq;
     }
+
+    public static SimpleMatrix eq(SimpleMatrix a, double b) {
+        if (a.numCols() != 1) throw new IllegalArgumentException("a must be a column vector!");
+
+        var eq = new SimpleMatrix(a.numRows(), 1);
+
+        for (int i = 0; i < a.numRows(); i++) {
+            eq.set(i, 0, a.get(i, 0) == b ? 1 : 0);
+        }
+
+        return eq;
+    }
+
+    /**
+     * Returns the index of the highest value in the row vector.
+     *
+     * @param a - the row vector
+     * @return the index of the highest value
+     */
+    public static int maxIndex(SimpleMatrix a) {
+        if (a.numRows() != 1) throw new IllegalArgumentException("a must be a row vector!");
+
+        var max = 0.0;
+        var maxIndex = -1;
+        for (int i = 0; i < a.numCols(); i++) {
+            var col = a.get(0, i);
+            if (col > max) {
+                max = col;
+                maxIndex = i;
+            }
+        }
+        
+        if (maxIndex == -1) throw new IllegalStateException("Could not find a max index!");
+
+        return maxIndex;
+    }
 }
