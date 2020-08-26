@@ -1,10 +1,15 @@
 package be.guldentops.geert.simple.ml;
 
+import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.Test;
 
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.eq;
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.mean;
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.ones;
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.zeros;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.ejml.EjmlUnitTests.assertEquals;
 import static org.ejml.EjmlUnitTests.assertShape;
 
 class SimpleMatrixUtilitiesTest {
@@ -43,5 +48,63 @@ class SimpleMatrixUtilitiesTest {
         assertThat(ones(3).get(0, 0)).isEqualTo(1.0);
         assertThat(ones(3).get(1, 0)).isEqualTo(1.0);
         assertThat(ones(3).get(2, 0)).isEqualTo(1.0);
+    }
+
+    @Test
+    void calculatesMeanOfAMatrix() {
+        assertThat(mean(new SimpleMatrix(new double[][]{{1, 1}, {1, 1}}))).isEqualTo(1);
+        assertThat(mean(new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}))).isEqualTo(2.5);
+    }
+
+    @Test
+    void equalityMatrixWithEqualMatrices() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
+                new SimpleMatrix(new double[][]{{1, 2}, {3, 4}})
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{1, 1}, {1, 1}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithCompletelyDifferentMatrices() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
+                new SimpleMatrix(new double[][]{{5, 6}, {7, 8}})
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{0, 0}, {0, 0}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithPartiallyDifferentMatrices() {
+        var eqMatrix = eq(
+                new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
+                new SimpleMatrix(new double[][]{{1, 6}, {3, 8}})
+        );
+
+        assertEquals(eqMatrix.getMatrix(), new SimpleMatrix(new double[][]{{1, 0}, {1, 0}}).getMatrix());
+    }
+
+    @Test
+    void equalityMatrixWithMatricesDifferentRows() {
+        assertThatThrownBy(() ->
+                eq(
+                        new SimpleMatrix(new double[][]{{1, 2}}),
+                        new SimpleMatrix(new double[][]{{1, 6}, {3, 8}})
+                )
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("a & b must have an equal number of rows!");
+    }
+
+    @Test
+    void equalityMatrixWithMatricesDifferentColumns() {
+        assertThatThrownBy(() ->
+                eq(
+                        new SimpleMatrix(new double[][]{{1}, {3}}),
+                        new SimpleMatrix(new double[][]{{1, 6}, {3, 8}})
+                )
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("a & b must have an equal number of columns!");
     }
 }

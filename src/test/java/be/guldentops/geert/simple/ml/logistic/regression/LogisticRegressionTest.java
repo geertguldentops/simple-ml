@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.eq;
+import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.mean;
 import static be.guldentops.geert.simple.ml.SimpleMatrixUtilities.zeros;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
@@ -105,31 +107,5 @@ class LogisticRegressionTest {
             assertShape(predictions.getMatrix(), 100, 1);
             assertThat(mean(eq(predictions, algorithm.labels())) * 100).isEqualTo(89.0, offset(0.1));
         }
-    }
-
-    private static double mean(SimpleMatrix a) {
-        var mean = 0.0;
-
-        var n = a.getNumElements();
-        for (int i = 0; i < n; i++) {
-            mean += a.get(i);
-        }
-
-        return mean / n;
-    }
-
-    private static SimpleMatrix eq(SimpleMatrix a, SimpleMatrix b) {
-        if (a.numRows() != b.numRows()) throw new IllegalArgumentException("a & b must have equal # rows!");
-        if (a.numCols() != b.numCols()) throw new IllegalArgumentException("a & b must have equal # columns!");
-
-        var eq = new SimpleMatrix(a.numRows(), b.numCols());
-
-        for (int i = 0; i < a.numRows(); i++) {
-            for (int j = 0; j < a.numCols(); j++) {
-                eq.set(i, j, a.get(i, j) == b.get(i, j) ? 1 : 0);
-            }
-        }
-
-        return eq;
     }
 }
