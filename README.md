@@ -46,6 +46,21 @@ A brief explanation of the training sets:
     | ...                           | ...                   | ...                       |
  
     This makes it a perfect training set for (multivariate) logistic regression (without requiring regularisation)
+    
+4.  handwritten_digits.txt is a training set containing handwritten digits, it is a subset of data of the 
+    MNIST handwritten digit dataset (http://yann.lecun.com/ exdb/mnist/) as a training set
+    
+    Each training example is a 20 pixel by 20 pixel grayscale image of the digit. 
+    Each pixel is represented by a floating point number indicating the grayscale intensity at that location. 
+    The 20 by 20 grid of pixels is “unrolled” into a 400-dimensional vector. 
+    Each of these training examples becomes a single row in our data matrix X. 
+    This gives us a 5000 by 400 matrix X where every row is a training example for a handwritten digit image.
+    
+    The second part of the training set is a 5000-dimensional vector y that contains labels for the training set. 
+    To make things more compatible with Octave/MATLAB indexing, where there is no zero index, the digit zero is mapped to the value ten. 
+    Therefore, a “0” digit is labeled as “10”, while the digits “1” to “9” are labeled as “1” to “9” in their natural order.
+ 
+    This makes it a perfect training set for one-vs-all classification problem
 
 ## How do I get set up? ##
 
