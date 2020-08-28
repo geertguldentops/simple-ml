@@ -40,14 +40,27 @@ A brief explanation of the training sets:
 
     | Penultimate exam result       | Final exam result     | Admitted to university    |
     | -------------                 |:---------------------:|:-------------------------:|
-    | 34.62365962451697             | 78.0246928153624      | 0 (was not admitted)      |
-    | 30.28671076822607             | 43.89499752400101     | 0 (was not admitted)      |
-    | 60.18259938620976             | 86.30855209546826     | 1 (was admitted)          |
+    | 34.62365962451697             | 78.0246928153624      |   0 (not admitted)        |
+    | 30.28671076822607             | 43.89499752400101     |   0 (not admitted)        |
+    | 60.18259938620976             | 86.30855209546826     |   1 (was admitted)        |
     | ...                           | ...                   | ...                       |
  
-    This makes it a perfect training set for (multivariate) logistic regression (without requiring regularisation)
+    This makes it a perfect training set for (multivariate) logistic regression (without requiring regularization)
     
-4.  handwritten_digits.txt is a training set containing handwritten digits, it is a subset of data of the 
+4.  microchip_quality.txt is a training set about microchips from a fabrication plant passing quality assurance or not.
+
+    It contains 2 features and a label:
+
+    | QA test 1 result      | QA test 2 result     | Accepted or rejected   |
+    | -------------         |:--------------------:|:----------------------:|
+    | 0.051267              |   0.69956            | 1 (accepted)           |
+    | -0.092742             |   0.68494            | 1 (accepted)           |
+    | 0.18376               |   0.93348            | 0 (accepted)           |
+    | ...                   | ...                  | ...                    |
+    
+    This makes it a perfect training set for (multivariate) logistic regression (with regularization)
+    
+5.  handwritten_digits.txt is a training set containing handwritten digits, it is a subset of data of the 
     MNIST handwritten digit dataset (http://yann.lecun.com/exdb/mnist/) as a training set
     
     Each training example is a 20 pixel by 20 pixel grayscale image of the digit. 
