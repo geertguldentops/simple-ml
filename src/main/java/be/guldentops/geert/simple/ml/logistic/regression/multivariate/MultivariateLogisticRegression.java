@@ -72,9 +72,9 @@ public class MultivariateLogisticRegression implements LogisticRegression {
         var biasedFeatures = applyBias(normalizer.normalize(features, mean, standardDeviation));
 
         var g = sigmoid(biasedFeatures.mult(theta));
-        var derivedCostFunction = (biasedFeatures.transpose()).mult(g.minus(labels));
+        var derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
 
-        return derivedCostFunction.divide(m);
+        return derivedCostFunction;
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
@@ -83,9 +83,9 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
         for (int i = 0; i < hyperparameters.maxIterations(); i++) {
             var g = sigmoid(features.mult(theta));
-            var derivedCostFunction = (features.transpose()).mult(g.minus(labels));
+            var derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
 
-            theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate() / m));
+            theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate()));
         }
 
         return theta;
