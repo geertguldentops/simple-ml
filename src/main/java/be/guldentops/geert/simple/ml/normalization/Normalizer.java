@@ -5,10 +5,10 @@ import org.ejml.simple.SimpleMatrix;
 public class Normalizer {
 
     public SimpleMatrix calculateMean(SimpleMatrix matrix) {
-        var mean = new SimpleMatrix(1, matrix.numCols());
+        SimpleMatrix mean = new SimpleMatrix(1, matrix.numCols());
 
         for (int j = 0; j < matrix.numCols(); j++) {
-            var columnMean = 0.0;
+            double columnMean = 0.0;
 
             for (int i = 0; i < matrix.numRows(); i++) {
                 columnMean += matrix.get(i, j);
@@ -21,11 +21,11 @@ public class Normalizer {
     }
 
     public SimpleMatrix calculateStandardDeviation(SimpleMatrix matrix, SimpleMatrix mean) {
-        var standardDeviation = new SimpleMatrix(1, matrix.numCols());
+        SimpleMatrix standardDeviation = new SimpleMatrix(1, matrix.numCols());
 
         for (int j = 0; j < matrix.numCols(); j++) {
-            var columnStandardDeviation = 0.0;
-            var columnMean = mean.get(0, j);
+            double columnStandardDeviation = 0.0;
+            double columnMean = mean.get(0, j);
 
             for (int i = 0; i < matrix.numRows(); i++) {
                 columnStandardDeviation += Math.pow(matrix.get(i, j) - columnMean, 2);
@@ -38,11 +38,11 @@ public class Normalizer {
     }
 
     public SimpleMatrix normalize(SimpleMatrix matrix, SimpleMatrix mean, SimpleMatrix standardDeviation) {
-        var normalizedMatrix = new SimpleMatrix(matrix.numRows(), matrix.numCols());
+        SimpleMatrix normalizedMatrix = new SimpleMatrix(matrix.numRows(), matrix.numCols());
 
         for (int j = 0; j < matrix.numCols(); j++) {
-            var columnMean = mean.get(0, j);
-            var columnStandardDeviation = standardDeviation.get(0, j);
+            double columnMean = mean.get(0, j);
+            double columnStandardDeviation = standardDeviation.get(0, j);
 
             for (int i = 0; i < matrix.numRows(); i++) {
                 normalizedMatrix.set(i, j, ((matrix.get(i, j) - columnMean) / handleZero(columnStandardDeviation)));

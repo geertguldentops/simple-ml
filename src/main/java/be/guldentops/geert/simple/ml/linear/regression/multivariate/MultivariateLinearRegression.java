@@ -24,8 +24,8 @@ public class MultivariateLinearRegression implements LinearRegression {
 
     @Override
     public void learn(SimpleMatrix trainingSet) {
-        var features = extractFeatures(trainingSet);
-        var labels = extractLabels(trainingSet);
+        SimpleMatrix features = extractFeatures(trainingSet);
+        SimpleMatrix labels = extractLabels(trainingSet);
 
         this.mean = normalizer.calculateMean(features);
         this.standardDeviation = normalizer.calculateStandardDeviation(features, mean);
@@ -42,10 +42,10 @@ public class MultivariateLinearRegression implements LinearRegression {
     }
 
     private SimpleMatrix applyBias(SimpleMatrix features) {
-        var m = features.numRows();
-        var bias = ones(m);
+        int m = features.numRows();
+        SimpleMatrix bias = ones(m);
 
-        var biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
+        SimpleMatrix biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
         biasedFeatures.insertIntoThis(0, 0, bias);
         biasedFeatures.insertIntoThis(0, 1, features);
 
@@ -53,14 +53,14 @@ public class MultivariateLinearRegression implements LinearRegression {
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
-        var m = features.numRows();
-        var theta = initialiseTheta(features.numCols());
+        int m = features.numRows();
+        SimpleMatrix theta = initialiseTheta(features.numCols());
 
-        for (int i = 0; i < hyperparameters.maxIterations(); i++) {
-            var h = features.mult(theta);
-            var derivedCostFunction = (features.transpose()).mult(h.minus(labels));
+        for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
+            SimpleMatrix h = features.mult(theta);
+            SimpleMatrix derivedCostFunction = features.transpose().mult(h.minus(labels));
 
-            theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate() / m));
+            theta = theta.minus(derivedCostFunction.scale(hyperparameters.getLearningRate() / m));
         }
 
         return theta;
@@ -72,11 +72,27 @@ public class MultivariateLinearRegression implements LinearRegression {
 
     @Override
     public double predict(SimpleMatrix newData) {
-        var prediction = applyBias(normalizer.normalize(newData, mean, standardDeviation)).mult(model);
+        SimpleMatrix prediction = applyBias(normalizer.normalize(newData, mean, standardDeviation)).mult(model);
 
         return prediction.get(0);
     }
 
-    public record Hyperparameters(double learningRate, int maxIterations) {
+    public static final class Hyperparameters {
+
+        private final double learningRate;
+        private final int maxIterations;
+
+        public Hyperparameters(double learningRate, int maxIterations) {
+            this.learningRate = learningRate;
+            this.maxIterations = maxIterations;
+        }
+
+        public double getLearningRate() {
+            return learningRate;
+        }
+
+        public int getMaxIterations() {
+            return maxIterations;
+        }
     }
 }

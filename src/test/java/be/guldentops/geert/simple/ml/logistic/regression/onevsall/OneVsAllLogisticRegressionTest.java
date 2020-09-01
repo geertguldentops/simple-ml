@@ -28,20 +28,20 @@ class OneVsAllLogisticRegressionTest {
 
         @Test
         void costFunctionNonZeroInitialThetaWithLambda3() {
-            var theta = new SimpleMatrix(new double[][]{
+            SimpleMatrix theta = new SimpleMatrix(new double[][]{
                     {-2},
                     {-1},
                     {1},
                     {2},
             });
-            var features = new SimpleMatrix(new double[][]{
+            SimpleMatrix features = new SimpleMatrix(new double[][]{
                     {0.1, 0.6, 1.1},
                     {0.2, 0.7, 1.2},
                     {0.3, 0.8, 1.3},
                     {0.4, 0.9, 1.4},
                     {0.5, 1, 1.5},
             });
-            var labels = new SimpleMatrix(new double[][]{
+            SimpleMatrix labels = new SimpleMatrix(new double[][]{
                     {1},
                     {0},
                     {1},
@@ -49,7 +49,7 @@ class OneVsAllLogisticRegressionTest {
                     {1},
             });
 
-            var gradient = oneVsAllLogisticRegression.costFunction(features, labels, theta, 3.0);
+            SimpleMatrix gradient = oneVsAllLogisticRegression.costFunction(features, labels, theta, 3.0);
 
             assertShape(gradient.getMatrix(), 4, 1);
 
@@ -61,20 +61,20 @@ class OneVsAllLogisticRegressionTest {
 
         @Test
         void costFunctionNonZeroInitialThetaWithLambda01() {
-            var theta = new SimpleMatrix(new double[][]{
+            SimpleMatrix theta = new SimpleMatrix(new double[][]{
                     {-2},
                     {-1},
                     {1},
                     {2},
             });
-            var features = new SimpleMatrix(new double[][]{
+            SimpleMatrix features = new SimpleMatrix(new double[][]{
                     {0.1, 0.6, 1.1},
                     {0.2, 0.7, 1.2},
                     {0.3, 0.8, 1.3},
                     {0.4, 0.9, 1.4},
                     {0.5, 1, 1.5},
             });
-            var labels = new SimpleMatrix(new double[][]{
+            SimpleMatrix labels = new SimpleMatrix(new double[][]{
                     {1},
                     {0},
                     {1},
@@ -82,7 +82,7 @@ class OneVsAllLogisticRegressionTest {
                     {1},
             });
 
-            var gradient = new OneVsAllLogisticRegression(null).costFunction(features, labels, theta, 0.1);
+            SimpleMatrix gradient = new OneVsAllLogisticRegression(null).costFunction(features, labels, theta, 0.1);
 
             assertShape(gradient.getMatrix(), 4, 1);
 
@@ -100,7 +100,7 @@ class OneVsAllLogisticRegressionTest {
 
         @BeforeEach
         void setUp() {
-            var trainingSet = new MatrixLoader().load("training-sets/handwritten_digits.txt", new Dimensions(5_000, 401));
+            SimpleMatrix trainingSet = new MatrixLoader().load("training-sets/handwritten_digits.txt", new Dimensions(5_000, 401));
 
             algorithm = new OneVsAllLogisticRegression(new Hyperparameters(0.01, 400, 0.1, 10));
             algorithm.learn(trainingSet);
@@ -108,7 +108,7 @@ class OneVsAllLogisticRegressionTest {
 
         @Test
         void calculateTrainingAccuracy() {
-            var predictions = algorithm.predictMany(algorithm.features());
+            SimpleMatrix predictions = algorithm.predictMany(algorithm.features());
 
             assertShape(predictions.getMatrix(), 5_000, 1);
             assertThat(mean(eq(predictions, algorithm.labels())) * 100).isEqualTo(94.9, offset(0.1));

@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>14</java.version>
+        <java.version>1.8</java.version>
 
         <ejm-all.version>0.39</ejm-all.version>
 
@@ -106,12 +106,10 @@
                         <maxmem>1536m</maxmem>
                         <showWarnings>true</showWarnings>
                         <showDeprecation>true</showDeprecation>
-                        <release>${java.version}</release>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                         <!-- without forking compilation happens in the same process, so no arguments are applied -->
                         <fork>true</fork>
-                        <compilerArgs>
-                            <compilerArg>--enable-preview</compilerArg>
-                        </compilerArgs>
                     </configuration>
                 </plugin>
 
@@ -119,9 +117,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
-                    <configuration>
-                        <argLine>--enable-preview</argLine>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -18,7 +18,7 @@ class UnivariateLinearRegressionTest {
 
     @BeforeEach
     void setUp() {
-        var trainingSet = new MatrixLoader().load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
+        SimpleMatrix trainingSet = new MatrixLoader().load("training-sets/food-truck-profits-per-city.txt", new Dimensions(97, 2));
 
         algorithm = new UnivariateLinearRegression(new Hyperparameters(0.01, 1500));
         algorithm.learn(trainingSet);
@@ -29,7 +29,7 @@ class UnivariateLinearRegressionTest {
 
         @Test
         void addsBiasToFeatures() {
-            var features = algorithm.features();
+            SimpleMatrix features = algorithm.features();
 
             assertShape(features.getMatrix(), 97, 2);
 
@@ -42,7 +42,7 @@ class UnivariateLinearRegressionTest {
 
         @Test
         void extractLabels() {
-            var labels = algorithm.labels();
+            SimpleMatrix labels = algorithm.labels();
 
             assertShape(labels.getMatrix(), 97, 1);
 
@@ -53,7 +53,7 @@ class UnivariateLinearRegressionTest {
 
         @Test
         void learnsModelThatFitsTrainingSet() {
-            var model = algorithm.model();
+            SimpleMatrix model = algorithm.model();
 
             assertShape(model.getMatrix(), 2, 1);
 
@@ -68,7 +68,7 @@ class UnivariateLinearRegressionTest {
 
         @Test
         void predictAccuratelyForAPopulationOf35k() {
-            var newData = new SimpleMatrix(new double[][]{{3.5}});
+            SimpleMatrix newData = new SimpleMatrix(new double[][]{{3.5}});
 
             double _35kPrediction = algorithm.predict(newData);
 
@@ -78,7 +78,7 @@ class UnivariateLinearRegressionTest {
 
         @Test
         void predictAccuratelyForAPopulationOf70k() {
-            var newData = new SimpleMatrix(new double[][]{{7.0}});
+            SimpleMatrix newData = new SimpleMatrix(new double[][]{{7.0}});
 
             double _70kPrediction = algorithm.predict(newData);
 

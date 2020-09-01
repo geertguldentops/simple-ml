@@ -8,23 +8,23 @@ public final class SimpleMatrixUtilities {
     }
 
     public static SimpleMatrix zeros(int numRows) {
-        var columnVector = new SimpleMatrix(numRows, 1);
+        SimpleMatrix columnVector = new SimpleMatrix(numRows, 1);
         columnVector.zero();
 
         return columnVector;
     }
 
     public static SimpleMatrix ones(int numRows) {
-        var columnVector = new SimpleMatrix(numRows, 1);
+        SimpleMatrix columnVector = new SimpleMatrix(numRows, 1);
         columnVector.fill(1.0);
 
         return columnVector;
     }
 
     public static double mean(SimpleMatrix a) {
-        var mean = 0.0;
+        double mean = 0.0;
 
-        var n = a.getNumElements();
+        int n = a.getNumElements();
         for (int i = 0; i < n; i++) {
             mean += a.get(i);
         }
@@ -34,9 +34,10 @@ public final class SimpleMatrixUtilities {
 
     public static SimpleMatrix eq(SimpleMatrix a, SimpleMatrix b) {
         if (a.numRows() != b.numRows()) throw new IllegalArgumentException("a & b must have an equal number of rows!");
-        if (a.numCols() != b.numCols()) throw new IllegalArgumentException("a & b must have an equal number of columns!");
+        if (a.numCols() != b.numCols())
+            throw new IllegalArgumentException("a & b must have an equal number of columns!");
 
-        var eq = new SimpleMatrix(a.numRows(), a.numCols());
+        SimpleMatrix eq = new SimpleMatrix(a.numRows(), a.numCols());
 
         for (int i = 0; i < a.numRows(); i++) {
             for (int j = 0; j < a.numCols(); j++) {
@@ -50,7 +51,7 @@ public final class SimpleMatrixUtilities {
     public static SimpleMatrix eq(SimpleMatrix a, double b) {
         if (a.numCols() != 1) throw new IllegalArgumentException("a must be a column vector!");
 
-        var eq = new SimpleMatrix(a.numRows(), 1);
+        SimpleMatrix eq = new SimpleMatrix(a.numRows(), 1);
 
         for (int i = 0; i < a.numRows(); i++) {
             eq.set(i, 0, a.get(i, 0) == b ? 1 : 0);
@@ -68,12 +69,12 @@ public final class SimpleMatrixUtilities {
     public static int maxIndex(SimpleMatrix a) {
         if (a.numRows() != 1) throw new IllegalArgumentException("a must be a row vector!");
 
-        var max = 0.0;
-        var maxIndex = -1;
+        double max = 0.0;
+        int maxIndex = -1;
         for (int i = 0; i < a.numCols(); i++) {
-            var col = a.get(0, i);
-            if (col > max) {
-                max = col;
+            double column = a.get(0, i);
+            if (column > max) {
+                max = column;
                 maxIndex = i;
             }
         }

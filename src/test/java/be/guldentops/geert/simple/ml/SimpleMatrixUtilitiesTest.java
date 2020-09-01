@@ -58,7 +58,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithEqualMatrices() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
                 new SimpleMatrix(new double[][]{{1, 2}, {3, 4}})
         );
@@ -68,7 +68,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithCompletelyDifferentMatrices() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
                 new SimpleMatrix(new double[][]{{5, 6}, {7, 8}})
         );
@@ -78,7 +78,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithPartiallyDifferentMatrices() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{1, 2}, {3, 4}}),
                 new SimpleMatrix(new double[][]{{1, 6}, {3, 8}})
         );
@@ -110,7 +110,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithEqual() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{2}, {2}, {2}}),
                 2
         );
@@ -120,7 +120,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithCompletelyDifferent() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{1}, {3}, {4}}),
                 2
         );
@@ -130,7 +130,7 @@ class SimpleMatrixUtilitiesTest {
 
     @Test
     void equalityMatrixWithPartiallyDifferent() {
-        var eqMatrix = eq(
+        SimpleMatrix eqMatrix = eq(
                 new SimpleMatrix(new double[][]{{1}, {3}, {4}, {3}}),
                 3
         );

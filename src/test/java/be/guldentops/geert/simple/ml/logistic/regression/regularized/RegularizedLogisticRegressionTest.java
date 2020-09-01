@@ -3,6 +3,7 @@ package be.guldentops.geert.simple.ml.logistic.regression.regularized;
 import be.guldentops.geert.simple.ml.Dimensions;
 import be.guldentops.geert.simple.ml.MatrixLoader;
 import be.guldentops.geert.simple.ml.logistic.regression.regularized.RegularizedLogisticRegression.Hyperparameters;
+import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ class RegularizedLogisticRegressionTest {
 
         @BeforeEach
         void setUp() {
-            var trainingSet = new MatrixLoader().load("training-sets/microchip_quality.txt", new Dimensions(118, 3));
+            SimpleMatrix trainingSet = new MatrixLoader().load("training-sets/microchip_quality.txt", new Dimensions(118, 3));
 
             algorithm = new RegularizedLogisticRegression(new Hyperparameters(0.01, 10_000, 1));
             algorithm.learn(trainingSet);
@@ -32,7 +33,7 @@ class RegularizedLogisticRegressionTest {
 
         @Test
         void extractPolynomialsFeatures() {
-            var features = algorithm.features();
+            SimpleMatrix features = algorithm.features();
 
             assertShape(features.getMatrix(), 118, 27);
 
@@ -49,7 +50,7 @@ class RegularizedLogisticRegressionTest {
 
         @Test
         void extractLabels() {
-            var labels = algorithm.labels();
+            SimpleMatrix labels = algorithm.labels();
 
             assertShape(labels.getMatrix(), 118, 1);
 
@@ -60,8 +61,8 @@ class RegularizedLogisticRegressionTest {
 
         @Test
         void costFunctionZeroInitialTheta() {
-            var initialTheta = zeros(algorithm.features().numCols() + 1);
-            var gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta, 1);
+            SimpleMatrix initialTheta = zeros(algorithm.features().numCols() + 1);
+            SimpleMatrix gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta, 1);
 
             assertShape(gradient.getMatrix(), 28, 1);
 
@@ -74,8 +75,8 @@ class RegularizedLogisticRegressionTest {
 
         @Test
         void costFunctionNonZeroInitialTheta() {
-            var initialTheta = ones(algorithm.features().numCols() + 1);
-            var gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta, 10);
+            SimpleMatrix initialTheta = ones(algorithm.features().numCols() + 1);
+            SimpleMatrix gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta, 10);
 
             assertShape(gradient.getMatrix(), 28, 1);
 
@@ -92,7 +93,7 @@ class RegularizedLogisticRegressionTest {
 
         @BeforeEach
         void setUp() {
-            var trainingSet = new MatrixLoader().load("training-sets/microchip_quality.txt", new Dimensions(118, 3));
+            SimpleMatrix trainingSet = new MatrixLoader().load("training-sets/microchip_quality.txt", new Dimensions(118, 3));
 
             algorithm = new RegularizedLogisticRegression(new Hyperparameters(0.01, 10_000, 0.1));
             algorithm.learn(trainingSet);
@@ -100,7 +101,7 @@ class RegularizedLogisticRegressionTest {
 
         @Test
         void calculateTrainingAccuracy() {
-            var prediction = algorithm.predictMany(algorithm.features());
+            SimpleMatrix prediction = algorithm.predictMany(algorithm.features());
 
             assertShape(prediction.getMatrix(), 118, 1);
             assertThat(mean(eq(prediction, algorithm.labels())) * 100).isEqualTo(86.45, offset(0.01));

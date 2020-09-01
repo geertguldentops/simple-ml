@@ -35,10 +35,6 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
         return labels;
     }
 
-    /* default */SimpleMatrix model() {
-        return model;
-    }
-
     @Override
     public void learn(SimpleMatrix trainingSet) {
         this.features = extractFeatures(trainingSet);
@@ -48,13 +44,13 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
         this.standardDeviation = normalizer.calculateStandardDeviation(features, mean);
 
         // Add + 1 to account for bias
-        var allThetas = new SimpleMatrix(hyperparameters.numberOfLabels, features.numCols() + 1);
+        SimpleMatrix allThetas = new SimpleMatrix(hyperparameters.numberOfLabels, features.numCols() + 1);
         allThetas.zero();
 
         for (int i = 0; i < hyperparameters.numberOfLabels; i++) {
-            var classGroundTruth = eq(labels, i + 1);
+            SimpleMatrix classGroundTruth = eq(labels, i + 1);
             System.out.printf("Staring calculation of gradient descent for number %d (zero == 10)\n", (i + 1));
-            var theta = gradientDescent(applyBias(normalizer.normalize(features, mean, standardDeviation)), classGroundTruth);
+            SimpleMatrix theta = gradientDescent(applyBias(normalizer.normalize(features, mean, standardDeviation)), classGroundTruth);
             System.out.printf("Finished calculating gradient descent for i %d (zero == 10)\n", (i + 1));
             allThetas.insertIntoThis(i, 0, theta.transpose());
         }
@@ -71,10 +67,10 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix applyBias(SimpleMatrix features) {
-        var m = features.numRows();
-        var bias = ones(m);
+        int m = features.numRows();
+        SimpleMatrix bias = ones(m);
 
-        var biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
+        SimpleMatrix biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
         biasedFeatures.insertIntoThis(0, 0, bias);
         biasedFeatures.insertIntoThis(0, 1, features);
 
@@ -82,32 +78,32 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
     }
 
     /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta, double lambda) {
-        var m = features.numRows();
-        var biasedFeatures = applyBias(features);
+        int m = features.numRows();
+        SimpleMatrix biasedFeatures = applyBias(features);
 
-        var g = sigmoid(biasedFeatures.mult(theta));
-        var derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
-        var regularizationTerm = thetaWithoutBias(theta).scale(lambda / m);
+        SimpleMatrix g = sigmoid(biasedFeatures.mult(theta));
+        SimpleMatrix derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
+        SimpleMatrix regularizationTerm = thetaWithoutBias(theta).scale(lambda / m);
 
         return derivedCostFunction.plus(regularizationTerm);
     }
 
     private SimpleMatrix thetaWithoutBias(SimpleMatrix theta) {
-        var thetaWithoutBias = new SimpleMatrix(theta.numRows(), theta.numCols());
+        SimpleMatrix thetaWithoutBias = new SimpleMatrix(theta.numRows(), theta.numCols());
         thetaWithoutBias.insertIntoThis(1, 0, theta.rows(1, theta.numRows()));
 
         return thetaWithoutBias;
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
-        var m = features.numRows();
-        var theta = initialiseTheta(features.numCols());
+        int m = features.numRows();
+        SimpleMatrix theta = initialiseTheta(features.numCols());
 
-        for (int i = 0; i < hyperparameters.maxIterations(); i++) {
-            var g = sigmoid(features.mult(theta));
-            var derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+        for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
+            SimpleMatrix g = sigmoid(features.mult(theta));
+            SimpleMatrix derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
             // It should be "thetaWithoutBias(theta)" but training accuracy drops by 21% if we do that!
-            var regularizationTerm = /*thetaWithoutBias(*/theta/*)*/.scale(1 - (hyperparameters.learningRate * hyperparameters.lambda / m));
+            SimpleMatrix regularizationTerm = /*thetaWithoutBias(*/theta/*)*/.scale(1 - (hyperparameters.getLearningRate() * hyperparameters.getLambda() / m));
 
             theta = regularizationTerm.minus(derivedCostFunction);
         }
@@ -120,7 +116,7 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix sigmoid(SimpleMatrix matrix) {
-        var sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
+        SimpleMatrix sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
 
         for (int i = 0; i < matrix.numRows(); i++) {
             for (int j = 0; j < matrix.numCols(); j++) {
@@ -133,33 +129,58 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
 
     @Override
     public double predictOne(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
         return predictions.get(0) >= 0.5 ? 1 : 0;
     }
 
     private SimpleMatrix predict(SimpleMatrix newData) {
-        var biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
+        SimpleMatrix biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
 
         return sigmoid(biasedNewData.mult(model.transpose()));
     }
 
     @Override
     public SimpleMatrix predictMany(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
-        var finalPredictions = new SimpleMatrix(newData.numRows(), 1);
+        SimpleMatrix finalPredictions = new SimpleMatrix(newData.numRows(), 1);
         for (int i = 0; i < predictions.numRows(); i++) {
-            var maxIndex = maxIndex(predictions.extractVector(true, i));
+            int maxIndex = maxIndex(predictions.extractVector(true, i));
             finalPredictions.set(i, 0, (maxIndex + 1)); // Data is 1-indexed instead of 0-indexed!
         }
 
         return finalPredictions;
     }
 
-    public record Hyperparameters(double learningRate,
-                                  int maxIterations,
-                                  double lambda,
-                                  int numberOfLabels) {
+    public static final class Hyperparameters {
+
+        private final double learningRate;
+        private final int maxIterations;
+        private final double lambda;
+        private final int numberOfLabels;
+
+        public Hyperparameters(double learningRate, int maxIterations, double lambda, int numberOfLabels) {
+            this.learningRate = learningRate;
+            this.maxIterations = maxIterations;
+            this.lambda = lambda;
+            this.numberOfLabels = numberOfLabels;
+        }
+
+        public double getLearningRate() {
+            return learningRate;
+        }
+
+        public int getMaxIterations() {
+            return maxIterations;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public int getNumberOfLabels() {
+            return numberOfLabels;
+        }
     }
 }

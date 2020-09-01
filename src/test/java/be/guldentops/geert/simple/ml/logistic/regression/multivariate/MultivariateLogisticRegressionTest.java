@@ -21,7 +21,7 @@ class MultivariateLogisticRegressionTest {
 
     @BeforeEach
     void setUp() {
-        var trainingSet = new MatrixLoader().load("training-sets/student_admission.txt", new Dimensions(100, 3));
+        SimpleMatrix trainingSet = new MatrixLoader().load("training-sets/student_admission.txt", new Dimensions(100, 3));
 
         algorithm = new MultivariateLogisticRegression(new Hyperparameters(0.01, 10_000));
         algorithm.learn(trainingSet);
@@ -32,7 +32,7 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void extractFeatures() {
-            var features = algorithm.features();
+            SimpleMatrix features = algorithm.features();
 
             assertShape(features.getMatrix(), 100, 2);
 
@@ -45,7 +45,7 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void extractLabels() {
-            var labels = algorithm.labels();
+            SimpleMatrix labels = algorithm.labels();
 
             assertShape(labels.getMatrix(), 100, 1);
 
@@ -56,8 +56,8 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void costFunctionZeroInitialTheta() {
-            var initialTheta = zeros(algorithm.features().numCols() + 1);
-            var gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta);
+            SimpleMatrix initialTheta = zeros(algorithm.features().numCols() + 1);
+            SimpleMatrix gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta);
 
             assertShape(gradient.getMatrix(), 3, 1);
 
@@ -68,8 +68,8 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void costFunctionNonZeroInitialTheta() {
-            var initialTheta = new SimpleMatrix(new double[][]{{-24}, {0.2}, {0.2}});
-            var gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta);
+            SimpleMatrix initialTheta = new SimpleMatrix(new double[][]{{-24}, {0.2}, {0.2}});
+            SimpleMatrix gradient = algorithm.costFunction(algorithm.features(), algorithm.labels(), initialTheta);
 
             assertShape(gradient.getMatrix(), 3, 1);
             assertThat(gradient.get(0, 0)).isEqualTo(-0.5999999999607762, offset(0.00000000001));
@@ -79,7 +79,7 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void model() {
-            var model = algorithm.model();
+            SimpleMatrix model = algorithm.model();
 
             assertShape(model.getMatrix(), 3, 1);
             assertThat(model.get(0, 0)).isEqualTo(1.2677701988489238, offset(0.00000000001));
@@ -93,16 +93,16 @@ class MultivariateLogisticRegressionTest {
 
         @Test
         void predictsAdmissionOfStudentWithExamScores45And85() {
-            var newData = new SimpleMatrix(new double[][]{{45, 85}});
+            SimpleMatrix newData = new SimpleMatrix(new double[][]{{45, 85}});
 
-            var predictAdmission = algorithm.predictOne(newData);
+            double predictAdmission = algorithm.predictOne(newData);
 
             assertThat(predictAdmission).isEqualTo(1.0);
         }
 
         @Test
         void calculateTrainingAccuracy() {
-            var predictions = algorithm.predictMany(algorithm.features());
+            SimpleMatrix predictions = algorithm.predictMany(algorithm.features());
 
             assertShape(predictions.getMatrix(), 100, 1);
             assertThat(mean(eq(predictions, algorithm.labels())) * 100).isEqualTo(89.0, offset(0.1));

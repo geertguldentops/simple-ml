@@ -33,10 +33,6 @@ public class RegularizedLogisticRegression implements LogisticRegression {
         return labels;
     }
 
-    /* default */SimpleMatrix model() {
-        return model;
-    }
-
     @Override
     public void learn(SimpleMatrix trainingSet) {
         this.features = addPolynomialFeatures(extractFeatures(trainingSet));
@@ -53,10 +49,10 @@ public class RegularizedLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix addPolynomialFeatures(SimpleMatrix features) {
-        var X1 = features.extractVector(false, 0);
-        var X2 = features.extractVector(false, 1);
+        SimpleMatrix X1 = features.extractVector(false, 0);
+        SimpleMatrix X2 = features.extractVector(false, 1);
 
-        var X = new SimpleMatrix(features.numRows(), 27);
+        SimpleMatrix X = new SimpleMatrix(features.numRows(), 27);
 
         int col = 0;
         for (int i = 1; i <= 6; i++) {
@@ -74,10 +70,10 @@ public class RegularizedLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix applyBias(SimpleMatrix features) {
-        var m = features.numRows();
-        var bias = ones(m);
+        int m = features.numRows();
+        SimpleMatrix bias = ones(m);
 
-        var biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
+        SimpleMatrix biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
         biasedFeatures.insertIntoThis(0, 0, bias);
         biasedFeatures.insertIntoThis(0, 1, features);
 
@@ -85,31 +81,31 @@ public class RegularizedLogisticRegression implements LogisticRegression {
     }
 
     /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta, double lambda) {
-        var m = features.numRows();
-        var biasedFeatures = applyBias(features);
+        int m = features.numRows();
+        SimpleMatrix biasedFeatures = applyBias(features);
 
-        var g = sigmoid(biasedFeatures.mult(theta));
-        var derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
-        var regularizationTerm = thetaWithoutBias(theta).scale(lambda / m);
+        SimpleMatrix g = sigmoid(biasedFeatures.mult(theta));
+        SimpleMatrix derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
+        SimpleMatrix regularizationTerm = thetaWithoutBias(theta).scale(lambda / m);
 
         return derivedCostFunction.plus(regularizationTerm);
     }
 
     private SimpleMatrix thetaWithoutBias(SimpleMatrix theta) {
-        var thetaWithoutBias = new SimpleMatrix(theta.numRows(), theta.numCols());
+        SimpleMatrix thetaWithoutBias = new SimpleMatrix(theta.numRows(), theta.numCols());
         thetaWithoutBias.insertIntoThis(1, 0, theta.rows(1, theta.numRows()));
 
         return thetaWithoutBias;
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
-        var m = features.numRows();
-        var theta = initialiseTheta(features.numCols());
+        int m = features.numRows();
+        SimpleMatrix theta = initialiseTheta(features.numCols());
 
-        for (int i = 0; i < hyperparameters.maxIterations(); i++) {
-            var g = sigmoid(features.mult(theta));
-            var derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
-            var regularizationTerm = thetaWithoutBias(theta).scale(1 - (hyperparameters.learningRate * hyperparameters.lambda / m));
+        for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
+            SimpleMatrix g = sigmoid(features.mult(theta));
+            SimpleMatrix derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+            SimpleMatrix regularizationTerm = thetaWithoutBias(theta).scale(1 - (hyperparameters.getLearningRate() * hyperparameters.getLambda() / m));
 
             theta = regularizationTerm.minus(derivedCostFunction);
         }
@@ -122,7 +118,7 @@ public class RegularizedLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix sigmoid(SimpleMatrix matrix) {
-        var sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
+        SimpleMatrix sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
 
         for (int i = 0; i < matrix.numRows(); i++) {
             for (int j = 0; j < matrix.numCols(); j++) {
@@ -135,20 +131,20 @@ public class RegularizedLogisticRegression implements LogisticRegression {
 
     @Override
     public double predictOne(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
         return predictions.get(0) >= 0.5 ? 1 : 0;
     }
 
     private SimpleMatrix predict(SimpleMatrix newData) {
-        var biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
+        SimpleMatrix biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
 
         return sigmoid(biasedNewData.mult(model));
     }
 
     @Override
     public SimpleMatrix predictMany(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
         for (int i = 0; i < predictions.numRows(); i++) {
             predictions.set(i, 0, predictions.get(i, 0) >= 0.5 ? 1 : 0);
@@ -157,6 +153,28 @@ public class RegularizedLogisticRegression implements LogisticRegression {
         return predictions;
     }
 
-    public record Hyperparameters(double learningRate, int maxIterations, double lambda) {
+    public static final class Hyperparameters {
+
+        private final double learningRate;
+        private final int maxIterations;
+        private final double lambda;
+
+        public Hyperparameters(double learningRate, int maxIterations, double lambda) {
+            this.learningRate = learningRate;
+            this.maxIterations = maxIterations;
+            this.lambda = lambda;
+        }
+
+        public double getLearningRate() {
+            return learningRate;
+        }
+
+        public int getMaxIterations() {
+            return maxIterations;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
     }
 }

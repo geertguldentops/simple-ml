@@ -10,9 +10,9 @@ import java.nio.file.Paths;
 public class MatrixLoader {
 
     public SimpleMatrix load(String fileName, Dimensions dimensions) {
-        var absoluteFilePath = createAbsoluteFilePath(fileName);
-        var rows = dimensions.rows();
-        var columns = dimensions.columns();
+        String absoluteFilePath = createAbsoluteFilePath(fileName);
+        int rows = dimensions.getRows();
+        int columns = dimensions.getColumns();
 
         try {
             return SimpleMatrix.wrap(MatrixIO.loadCSV(absoluteFilePath, rows, columns));

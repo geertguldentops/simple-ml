@@ -57,10 +57,10 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix applyBias(SimpleMatrix features) {
-        var m = features.numRows();
-        var bias = ones(m);
+        int m = features.numRows();
+        SimpleMatrix bias = ones(m);
 
-        var biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
+        SimpleMatrix biasedFeatures = new SimpleMatrix(m, features.numCols() + 1);
         biasedFeatures.insertIntoThis(0, 0, bias);
         biasedFeatures.insertIntoThis(0, 1, features);
 
@@ -68,24 +68,24 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     }
 
     /* default */SimpleMatrix costFunction(SimpleMatrix features, SimpleMatrix labels, SimpleMatrix theta) {
-        var m = features.numRows();
-        var biasedFeatures = applyBias(normalizer.normalize(features, mean, standardDeviation));
+        int m = features.numRows();
+        SimpleMatrix biasedFeatures = applyBias(normalizer.normalize(features, mean, standardDeviation));
 
-        var g = sigmoid(biasedFeatures.mult(theta));
-        var derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
+        SimpleMatrix g = sigmoid(biasedFeatures.mult(theta));
+        SimpleMatrix derivedCostFunction = biasedFeatures.transpose().mult(g.minus(labels)).divide(m);
 
         return derivedCostFunction;
     }
 
     private SimpleMatrix gradientDescent(SimpleMatrix features, SimpleMatrix labels) {
-        var m = features.numRows();
-        var theta = initialiseTheta(features.numCols());
+        int m = features.numRows();
+        SimpleMatrix theta = initialiseTheta(features.numCols());
 
-        for (int i = 0; i < hyperparameters.maxIterations(); i++) {
-            var g = sigmoid(features.mult(theta));
-            var derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+        for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
+            SimpleMatrix g = sigmoid(features.mult(theta));
+            SimpleMatrix derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
 
-            theta = theta.minus(derivedCostFunction.scale(hyperparameters.learningRate()));
+            theta = theta.minus(derivedCostFunction.scale(hyperparameters.getLearningRate()));
         }
 
         return theta;
@@ -96,7 +96,7 @@ public class MultivariateLogisticRegression implements LogisticRegression {
     }
 
     private SimpleMatrix sigmoid(SimpleMatrix matrix) {
-        var sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
+        SimpleMatrix sigmoid = new SimpleMatrix(matrix.numRows(), matrix.numCols());
 
         for (int i = 0; i < matrix.numRows(); i++) {
             for (int j = 0; j < matrix.numCols(); j++) {
@@ -109,20 +109,20 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
     @Override
     public double predictOne(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
         return predictions.get(0) >= 0.5 ? 1 : 0;
     }
 
     private SimpleMatrix predict(SimpleMatrix newData) {
-        var biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
+        SimpleMatrix biasedNewData = applyBias(normalizer.normalize(newData, mean, standardDeviation));
 
         return sigmoid(biasedNewData.mult(model));
     }
 
     @Override
     public SimpleMatrix predictMany(SimpleMatrix newData) {
-        var predictions = predict(newData);
+        SimpleMatrix predictions = predict(newData);
 
         for (int i = 0; i < predictions.numRows(); i++) {
             predictions.set(i, 0, predictions.get(i, 0) >= 0.5 ? 1 : 0);
@@ -131,6 +131,22 @@ public class MultivariateLogisticRegression implements LogisticRegression {
         return predictions;
     }
 
-    public record Hyperparameters(double learningRate, int maxIterations) {
+    public static final class Hyperparameters {
+
+        private final double learningRate;
+        private final int maxIterations;
+
+        public Hyperparameters(double learningRate, int maxIterations) {
+            this.learningRate = learningRate;
+            this.maxIterations = maxIterations;
+        }
+
+        public double getLearningRate() {
+            return learningRate;
+        }
+
+        public int getMaxIterations() {
+            return maxIterations;
+        }
     }
 }
