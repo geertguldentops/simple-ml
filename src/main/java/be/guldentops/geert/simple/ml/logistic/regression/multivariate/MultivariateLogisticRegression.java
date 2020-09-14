@@ -83,7 +83,7 @@ public class MultivariateLogisticRegression implements LogisticRegression {
 
         for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
             SimpleMatrix g = sigmoid(features.mult(theta));
-            SimpleMatrix derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+            SimpleMatrix derivedCostFunction = (features.transpose()).mult(g.minus(labels)).divide(m);
 
             theta = theta.minus(derivedCostFunction.scale(hyperparameters.getLearningRate()));
         }

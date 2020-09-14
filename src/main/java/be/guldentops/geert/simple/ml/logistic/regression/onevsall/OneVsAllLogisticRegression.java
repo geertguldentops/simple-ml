@@ -101,7 +101,7 @@ public class OneVsAllLogisticRegression implements LogisticRegression {
 
         for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
             SimpleMatrix g = sigmoid(features.mult(theta));
-            SimpleMatrix derivedCostFunction = features.transpose().mult(g.minus(labels)).divide(m);
+            SimpleMatrix derivedCostFunction = (features.transpose()).mult(g.minus(labels)).divide(m);
             // It should be "thetaWithoutBias(theta)" but training accuracy drops by 21% if we do that!
             SimpleMatrix regularizationTerm = /*thetaWithoutBias(*/theta/*)*/.scale(1 - (hyperparameters.getLearningRate() * hyperparameters.getLambda() / m));
 
