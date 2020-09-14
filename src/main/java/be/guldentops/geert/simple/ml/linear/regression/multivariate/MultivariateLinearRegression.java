@@ -58,7 +58,7 @@ public class MultivariateLinearRegression implements LinearRegression {
 
         for (int i = 0; i < hyperparameters.getMaxIterations(); i++) {
             SimpleMatrix h = features.mult(theta);
-            SimpleMatrix derivedCostFunction = features.transpose().mult(h.minus(labels));
+            SimpleMatrix derivedCostFunction = (features.transpose()).mult(h.minus(labels));
 
             theta = theta.minus(derivedCostFunction.scale(hyperparameters.getLearningRate() / m));
         }
