@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>14</java.version>
+        <java.version>15</java.version>
 
         <ejm-all.version>0.39</ejm-all.version>
 
